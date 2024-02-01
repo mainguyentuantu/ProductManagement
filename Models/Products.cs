@@ -16,4 +16,9 @@ namespace ProductManagement.Models
         
       
     }
+
+    public class ProductModel
+    {
+        public List<Products> ProductList { get; set; }
+    }
 }

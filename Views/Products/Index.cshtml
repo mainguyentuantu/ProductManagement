@@ -1,0 +1,71 @@
+﻿@model IEnumerable<ProductManagement.Models.Products>
+
+@{
+    ViewData["Title"] = "PRODUCTS";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.TenSP)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.KichThuoc)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ChatLieu)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.MauSac)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.KieuDang)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ThuongHieu)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.GiaCa)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.TenSP)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.KichThuoc)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ChatLieu)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.MauSac)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.KieuDang)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ThuongHieu)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.GiaCa)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.MaSP">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.MaSP">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.MaSP">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
