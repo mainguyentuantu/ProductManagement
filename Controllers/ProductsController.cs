@@ -19,9 +19,77 @@ namespace ProductManagement.Controllers
         }
 
         // GET: Products
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string sortOrder, string currentFilter, string searchString, int? pageNumber)
         {
-            return View(await _context.Products.ToListAsync());
+            //phan trang
+            ViewData["CurrentSort"] = sortOrder;
+            //sort
+            ViewData["TenSPSortParm"] = String.IsNullOrEmpty(sortOrder) ? "TenSP_desc" : "TenSP";
+            ViewData["KichThuocSortParm"] = String.IsNullOrEmpty(sortOrder) ? "KichThuoc" : "";
+            ViewData["ChatLieuSortParm"] = String.IsNullOrEmpty(sortOrder) ? "ChatLieu" : "";
+            ViewData["MauSacSortParm"] = String.IsNullOrEmpty(sortOrder) ? "MauSac" : "";
+            ViewData["KieuDangSortParm"] = String.IsNullOrEmpty(sortOrder) ? "KieuDang" : "";
+            ViewData["ThuongHieuSortParm"] = String.IsNullOrEmpty(sortOrder) ? "ThuongHieu" : "";
+            ViewData["GiaCaSortParm"] = String.IsNullOrEmpty(sortOrder) ? "GiaCa" : "";
+
+            ViewData["CurrentFilter"] = searchString; //search
+
+            //phan trang
+            if (searchString != null)
+            {
+                pageNumber = 1;
+            }
+            else
+            {
+                searchString = currentFilter;
+            }
+            var products = from s in _context.Products
+                           select s;
+            
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                products = products.Where(s => s.TenSP.Contains(searchString));
+            }
+
+                switch (sortOrder)
+                {
+                    case "TenSP":
+                        products = products.OrderBy(s => s.TenSP);
+                        break;
+
+                    case "KichThuoc":
+                        products = products.OrderBy(s => s.KichThuoc);
+                        break;
+
+                    case "ChatLieu":
+                        products = products.OrderBy(s => s.ChatLieu);
+                        break;
+
+                    case "MauSac":
+                        products = products.OrderBy(s => s.MauSac);
+                        break;
+
+                    case "KieuDang":
+                        products = products.OrderBy(s => s.KieuDang);
+                        break;
+
+                    case "ThuongHieu":
+                        products = products.OrderBy(s => s.ThuongHieu);
+                        break;
+
+                    case "GiaCa":
+                        products = products.OrderBy(s => s.GiaCa);
+                        break;
+
+                default:
+                    products = products.OrderByDescending(s => s.TenSP);
+                    break;
+
+            }
+
+            int pageSize = 3;
+            return View(await PaginatedList<Products>.CreateAsync(products.AsNoTracking(), pageNumber ?? 1, pageSize));
+
         }
 
         // GET: Products/Details/5
