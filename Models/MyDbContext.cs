@@ -5,6 +5,7 @@ namespace ProductManagement.Models
     public class MyDbContext : DbContext
     { 
         public DbSet<Products> Products { get; set; }
+        public DbSet<Order> Orders { get; set; }
 
         public MyDbContext(DbContextOptions options) : base(options)
         {

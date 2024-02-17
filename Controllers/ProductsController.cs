@@ -31,6 +31,8 @@ namespace ProductManagement.Controllers
             ViewData["KieuDangSortParm"] = String.IsNullOrEmpty(sortOrder) ? "KieuDang" : "";
             ViewData["ThuongHieuSortParm"] = String.IsNullOrEmpty(sortOrder) ? "ThuongHieu" : "";
             ViewData["GiaCaSortParm"] = String.IsNullOrEmpty(sortOrder) ? "GiaCa" : "";
+            ViewData["SoLuongTongSortParm"] = String.IsNullOrEmpty(sortOrder) ? "SoLuongTong" : "";
+
 
             ViewData["CurrentFilter"] = searchString; //search
 
@@ -80,6 +82,9 @@ namespace ProductManagement.Controllers
                     case "GiaCa":
                         products = products.OrderBy(s => s.GiaCa);
                         break;
+                    case "SoLuongTong":
+                    products = products.OrderBy(s => s.SoLuongTong);
+                    break;
 
                 default:
                     products = products.OrderByDescending(s => s.TenSP);
@@ -121,7 +126,7 @@ namespace ProductManagement.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("MaSP,TenSP,KichThuoc,ChatLieu,MauSac,KieuDang,ThuongHieu,GiaCa")] Products products)
+        public async Task<IActionResult> Create([Bind("MaSP,TenSP,KichThuoc,ChatLieu,MauSac,KieuDang,ThuongHieu,GiaCa,SoLuongTong")] Products products)
         {
             if (ModelState.IsValid)
             {
@@ -153,7 +158,7 @@ namespace ProductManagement.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("MaSP,TenSP,KichThuoc,ChatLieu,MauSac,KieuDang,ThuongHieu,GiaCa")] Products products)
+        public async Task<IActionResult> Edit(int id, [Bind("MaSP,TenSP,KichThuoc,ChatLieu,MauSac,KieuDang,ThuongHieu,GiaCa,SoLuongTong")] Products products)
         {
             if (id != products.MaSP)
             {
@@ -215,6 +220,56 @@ namespace ProductManagement.Controllers
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
+
+        // GET: Products/Order/5
+        public async Task<IActionResult> Order(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var product = await _context.Products.FindAsync(id);
+            if (product == null)
+            {
+                return NotFound();
+            }
+
+            ViewBag.ProductName = product.TenSP;
+            ViewBag.ProductPrice = product.GiaCa;
+
+            return View();
+        }
+
+        // POST: Products/Order
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Order(Order order)
+        {
+            if (ModelState.IsValid)
+            {
+                var product = await _context.Products.FindAsync(order.ProductId);
+                if (product == null)
+                {
+                    return NotFound();
+                }
+
+                var newOrder = new Order
+                {
+                    ProductId = order.ProductId,
+                    TenKhachHang = order.TenKhachHang,
+                    SoLuongDatHang = order.SoLuongDatHang,
+                    TongTien = order.SoLuongDatHang * product.GiaCa
+                };
+
+                _context.Orders.Add(newOrder);
+                await _context.SaveChangesAsync();
+
+                return RedirectToAction(nameof(Index));
+            }
+            return View(order);
+        }
+
 
         private bool ProductsExists(int id)
         {

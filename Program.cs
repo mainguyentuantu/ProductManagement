@@ -30,4 +30,9 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Products}/{action=Index}/{id?}");
 
+app.MapControllerRoute(
+    name: "order",
+    pattern: "products/order",
+    defaults: new { controller = "Products", action = "Order" });
+
 app.Run();

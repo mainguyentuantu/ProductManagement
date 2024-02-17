@@ -41,7 +41,11 @@ namespace ProductManagement.Models
         [Range(0, double.MaxValue, ErrorMessage = "Giá sản phẩm không được nhập số âm.")]
         public double GiaCa { get; set; }
 
+        [Required(ErrorMessage = "Số lượng tổng là trường bắt buộc.")]
+        [Range(0, int.MaxValue, ErrorMessage = "Số lượng tổng không được nhập số âm.")]
+        public int SoLuongTong { get; set; }
 
+        public ICollection<Order>? Orders { get; set; } // Danh sách các đơn hàng liên kết với sản phẩm
     }
 
     public class ProductModel
