@@ -1,0 +1,36 @@
+﻿@model IEnumerable<ProductManagement.Models.Order>
+
+@{
+    ViewData["Title"] = "Danh sách đơn hàng";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Mã đơn hàng</th>
+            <th>Sản phẩm</th>
+            <th>Giá sản phẩm</th>
+            <th>Số lượng</th>
+            <th>Thành tiền</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.MaDH</td>
+                <td>@item.Product.TenSP</td>
+                <td>@item.Product.GiaCa</td>
+                <td>@item.SoLuongDH</td>
+                <td>@item.ThanhTien</td>
+                <td><a asp-action="Delete" asp-route-id="@item.MaDH">Delete</a></td>
+                
+            </tr>
+        }
+
+    </tbody>
+
+</table>
+    <a asp-action="Create">Add to List</a>

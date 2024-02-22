@@ -5,17 +5,17 @@
 namespace ProductManagement.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialAddSoLuongTong : Migration
+    public partial class EditProductsAddOrder : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AddColumn<int>(
+            migrationBuilder.AddColumn<double>(
                 name: "SoLuongTong",
                 table: "Products",
-                type: "int",
+                type: "float",
                 nullable: false,
-                defaultValue: 0);
+                defaultValue: 0.0);
         }
 
         /// <inheritdoc />

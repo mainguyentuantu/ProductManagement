@@ -11,8 +11,8 @@ using ProductManagement.Models;
 namespace ProductManagement.Migrations
 {
     [DbContext(typeof(MyDbContext))]
-    [Migration("20240217162235_AddOrder")]
-    partial class AddOrder
+    [Migration("20240221072816_AddOrderAgain")]
+    partial class AddOrderAgain
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -26,28 +26,27 @@ namespace ProductManagement.Migrations
 
             modelBuilder.Entity("ProductManagement.Models.Order", b =>
                 {
-                    b.Property<int>("OrderId")
+                    b.Property<int>("MaDH")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("OrderId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("MaDH"));
 
-                    b.Property<int>("ProductId")
+                    b.Property<int>("MaSP")
                         .HasColumnType("int");
 
-                    b.Property<int>("SoLuongDatHang")
-                        .HasColumnType("int");
-
-                    b.Property<string>("TenKhachHang")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<double>("TongTien")
+                    b.Property<double>("SoLuongDH")
                         .HasColumnType("float");
 
-                    b.HasKey("OrderId");
+                    b.Property<string>("TenKhachHang")
+                        .HasColumnType("nvarchar(max)");
 
-                    b.HasIndex("ProductId");
+                    b.Property<double>("ThanhTien")
+                        .HasColumnType("float");
+
+                    b.HasKey("MaDH");
+
+                    b.HasIndex("MaSP");
 
                     b.ToTable("Orders");
                 });
@@ -79,8 +78,8 @@ namespace ProductManagement.Migrations
                         .HasMaxLength(25)
                         .HasColumnType("nvarchar(25)");
 
-                    b.Property<int>("SoLuongTong")
-                        .HasColumnType("int");
+                    b.Property<double>("SoLuongTong")
+                        .HasColumnType("float");
 
                     b.Property<string>("TenSP")
                         .IsRequired()
@@ -100,7 +99,7 @@ namespace ProductManagement.Migrations
                 {
                     b.HasOne("ProductManagement.Models.Products", "Product")
                         .WithMany("Orders")
-                        .HasForeignKey("ProductId")
+                        .HasForeignKey("MaSP")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

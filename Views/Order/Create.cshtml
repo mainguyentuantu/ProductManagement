@@ -1,0 +1,43 @@
+﻿@model ProductManagement.Models.Order
+
+
+@{
+    ViewData["Title"] = "Thêm sản phẩm vào đơn hàng";
+}
+
+<h1>@ViewData["Title"]</h1>
+@* <div class="form-group">
+    <label asp-for="TenKhachHang" class="control-label"></label>
+    <input asp-for="TenKhachHang" class="form-control" />
+    <span asp-validation-for="TenKhachHang" class="text-danger"></span> *@
+<br />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="CreateConfirmed" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <br />
+            <div class="form-group">
+                <label asp-for="MaSP" class="control-label">TÊN SẢN PHẨM</label>
+                <select asp-for="MaSP" asp-items="@(new SelectList(ViewData["Products"] as List<ProductManagement.Models.Products>, "MaSP", "TenSP","GiaCa"))" class="form-control"></select>
+                <span asp-validation-for="MaSP" class="text-danger"></span>
+            </div>
+            <br />
+            <div class="form-group">
+                <label asp-for="SoLuongDH" class="control-label">SỐ LƯỢNG ĐẶT HÀNG</label>
+                <input asp-for="SoLuongDH" class="form-control" />
+                <span asp-validation-for="SoLuongDH" class="text-danger"></span>
+            </div>
+            <br />  
+            <div class="form-group">
+                <input type="submit" value="Tạo đơn hàng" class="btn btn-primary" />  | 
+                <a asp-action="Index">Back to List</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

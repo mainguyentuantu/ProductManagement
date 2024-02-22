@@ -1,0 +1,25 @@
+﻿@model ProductManagement.Models.Order
+
+@{
+    ViewData["Title"] = "Xác nhận thêm sản phẩm vào đơn hàng";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<p>Thông tin đơn hàng mới:</p>
+<ul>
+    <li>Mã đơn hàng: @Model.MaDH</li>
+    <li>Tên sản phẩm: @Model.Product.TenSP</li>
+    <li>Số lượng đặt hàng: @Model.SoLuongDH</li>
+    <li>Thành tiền: @Model.ThanhTien</li>
+</ul>
+
+<form method="post" action="@Url.Action("CreateConfirmed", "Order")">
+    <button type="submit" class="btn btn-primary">Quay lại danh sách đơn hàng</button>
+</form>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

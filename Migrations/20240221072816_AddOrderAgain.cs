@@ -5,7 +5,7 @@
 namespace ProductManagement.Migrations
 {
     /// <inheritdoc />
-    public partial class AddOrder : Migration
+    public partial class AddOrderAgain : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -14,28 +14,28 @@ namespace ProductManagement.Migrations
                 name: "Orders",
                 columns: table => new
                 {
-                    OrderId = table.Column<int>(type: "int", nullable: false)
+                    MaDH = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    ProductId = table.Column<int>(type: "int", nullable: false),
-                    TenKhachHang = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    SoLuongDatHang = table.Column<int>(type: "int", nullable: false),
-                    TongTien = table.Column<double>(type: "float", nullable: false)
+                    TenKhachHang = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    MaSP = table.Column<int>(type: "int", nullable: false),
+                    SoLuongDH = table.Column<double>(type: "float", nullable: false),
+                    ThanhTien = table.Column<double>(type: "float", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Orders", x => x.OrderId);
+                    table.PrimaryKey("PK_Orders", x => x.MaDH);
                     table.ForeignKey(
-                        name: "FK_Orders_Products_ProductId",
-                        column: x => x.ProductId,
+                        name: "FK_Orders_Products_MaSP",
+                        column: x => x.MaSP,
                         principalTable: "Products",
                         principalColumn: "MaSP",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Orders_ProductId",
+                name: "IX_Orders_MaSP",
                 table: "Orders",
-                column: "ProductId");
+                column: "MaSP");
         }
 
         /// <inheritdoc />

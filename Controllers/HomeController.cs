@@ -19,9 +19,6 @@ namespace ProductManagement.Controllers
         public IActionResult Index()
         {
            
-/*            ProductModel model = new ProductModel();
-            model.ProductList = new List<Products>();
-            var data = _dbContext.Products.ToList();*/
             return View();
         }
         

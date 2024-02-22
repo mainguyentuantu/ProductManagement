@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -17,6 +19,8 @@ namespace ProductManagement.Controllers
         {
             _context = context;
         }
+
+
 
         // GET: Products
         public async Task<IActionResult> Index(string sortOrder, string currentFilter, string searchString, int? pageNumber)
@@ -47,42 +51,42 @@ namespace ProductManagement.Controllers
             }
             var products = from s in _context.Products
                            select s;
-            
+
             if (!String.IsNullOrEmpty(searchString))
             {
                 products = products.Where(s => s.TenSP.Contains(searchString));
             }
 
-                switch (sortOrder)
-                {
-                    case "TenSP":
-                        products = products.OrderBy(s => s.TenSP);
-                        break;
+            switch (sortOrder)
+            {
+                case "TenSP":
+                    products = products.OrderBy(s => s.TenSP);
+                    break;
 
-                    case "KichThuoc":
-                        products = products.OrderBy(s => s.KichThuoc);
-                        break;
+                case "KichThuoc":
+                    products = products.OrderBy(s => s.KichThuoc);
+                    break;
 
-                    case "ChatLieu":
-                        products = products.OrderBy(s => s.ChatLieu);
-                        break;
+                case "ChatLieu":
+                    products = products.OrderBy(s => s.ChatLieu);
+                    break;
 
-                    case "MauSac":
-                        products = products.OrderBy(s => s.MauSac);
-                        break;
+                case "MauSac":
+                    products = products.OrderBy(s => s.MauSac);
+                    break;
 
-                    case "KieuDang":
-                        products = products.OrderBy(s => s.KieuDang);
-                        break;
+                case "KieuDang":
+                    products = products.OrderBy(s => s.KieuDang);
+                    break;
 
-                    case "ThuongHieu":
-                        products = products.OrderBy(s => s.ThuongHieu);
-                        break;
+                case "ThuongHieu":
+                    products = products.OrderBy(s => s.ThuongHieu);
+                    break;
 
-                    case "GiaCa":
-                        products = products.OrderBy(s => s.GiaCa);
-                        break;
-                    case "SoLuongTong":
+                case "GiaCa":
+                    products = products.OrderBy(s => s.GiaCa);
+                    break;
+                case "SoLuongTong":
                     products = products.OrderBy(s => s.SoLuongTong);
                     break;
 
@@ -219,61 +223,16 @@ namespace ProductManagement.Controllers
 
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
+
         }
-
-        // GET: Products/Order/5
-        public async Task<IActionResult> Order(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var product = await _context.Products.FindAsync(id);
-            if (product == null)
-            {
-                return NotFound();
-            }
-
-            ViewBag.ProductName = product.TenSP;
-            ViewBag.ProductPrice = product.GiaCa;
-
-            return View();
-        }
-
-        // POST: Products/Order
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Order(Order order)
-        {
-            if (ModelState.IsValid)
-            {
-                var product = await _context.Products.FindAsync(order.ProductId);
-                if (product == null)
-                {
-                    return NotFound();
-                }
-
-                var newOrder = new Order
-                {
-                    ProductId = order.ProductId,
-                    TenKhachHang = order.TenKhachHang,
-                    SoLuongDatHang = order.SoLuongDatHang,
-                    TongTien = order.SoLuongDatHang * product.GiaCa
-                };
-
-                _context.Orders.Add(newOrder);
-                await _context.SaveChangesAsync();
-
-                return RedirectToAction(nameof(Index));
-            }
-            return View(order);
-        }
-
 
         private bool ProductsExists(int id)
         {
             return _context.Products.Any(e => e.MaSP == id);
         }
+
+
     }
 }
+
+
