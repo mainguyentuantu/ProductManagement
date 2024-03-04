@@ -10,7 +10,8 @@
     <thead>
         <tr>
             <th>Mã đơn hàng</th>
-            <th>Sản phẩm</th>
+            <th>Tên khách hàng</th>
+            <th>Sản phẩm</th>        
             <th>Giá sản phẩm</th>
             <th>Số lượng</th>
             <th>Thành tiền</th>
@@ -21,11 +22,17 @@
         {
             <tr>
                 <td>@item.MaDH</td>
+                <td>@item.TenKhachHang</td>
                 <td>@item.Product.TenSP</td>
-                <td>@item.Product.GiaCa</td>
+                <td>@item.Product.GiaCa.ToString("n0")</td>
+                @* <td><input asp-for="@item.SoLuongDH" id="@item.MaDH" /></td> *@
                 <td>@item.SoLuongDH</td>
-                <td>@item.ThanhTien</td>
-                <td><a asp-action="Delete" asp-route-id="@item.MaDH">Delete</a></td>
+                <td>@item.ThanhTien.ToString("n0")</td>
+                <td>
+               @*  <a asp-action="Edit" asp-route-id="@item.MaDH">Edit</a> | *@
+                <a asp-action="Delete" asp-route-id="@item.MaDH">Delete</a>
+                </td>
+                
                 
             </tr>
         }
@@ -34,3 +41,4 @@
 
 </table>
     <a asp-action="Create">Add to List</a>
+    
