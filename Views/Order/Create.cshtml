@@ -27,20 +27,78 @@
 
             <div class="form-group">
                 <label asp-for="MaSP" class="control-label">TÊN SẢN PHẨM</label>
-                <select id="sp" asp-for="MaSP" asp-items="@(new SelectList(ViewData["Products"] as List<ProductManagement.Models.Products>, "MaSP", "TenSP"))" class="form-control"></select>
-                   
+                <select id="sp" asp-for="MaSP" asp-items="@(new SelectList(ViewData["Products"] as List<ProductManagement.Models.Products>, "MaSP", "TenSP"))" class="form-control">
+                </select>                   
             </div>
             <br />
-            <div>Giá: <span id="GiaCa" style="color:tomato"></span></div>
+            <div>Giá: <span id="GiaCa" style="color:blue"></span></div>
             <br />
+            @section Scripts {
+
+                <script>
+                    var arr;
+                    $(document).ready(function () {
+                        var idsp = 0;
+                        var SoLuongDHElement = $("#SoLuongDH");
+                        $('#sp').on('change', function () {
+                            console.log('value san pham',this.value);
+                            idsp = Number(this.value)
+                            console.log(' id change', idsp);
+                        });
+                        // Định nghĩa một hàm để gửi yêu cầu API và cập nhật giá cả khi có phản hồi
+                        function updatePrice() {
+                            $.ajax({
+                                url: "https://localhost:7215/api/Demo",
+                                type: 'GET',
+                                dataType: 'json',
+                                success: function (res) {
+
+                                    arr = res;
+                                    
+
+                         
+                                    var obj = res.find(a=> a.maSP == idsp)
+
+                                    if (obj) {
+                                        $("#GiaCa").text(obj.giaCa);
+                                        if (obj.giaCa && SoLuongDHElement.val()) {
+                                            var totalPrice = obj.giaCa * parseInt(SoLuongDHElement.val());
+                                            $("#ThanhTien").text(totalPrice);
+                                            console.log(' san pham lay ra', obj);
+                                            var x = parseInt(SoLuongDHElement.val());
+                                            console.log(' so luong', x);
+                                            console.log(' so gia ca', obj.giaCa);
+                                        }
+                                    }
+           
+                                }
+                            });
+                        }
+
+                        // Gọi hàm updatePrice khi sự kiện "change" xảy ra trên select element
+                        $("#sp").on("change", function () {
+                            updatePrice();
+                        });
+                        SoLuongDHElement.on("input", function () {
+                            updatePrice();
+                        });
+                        // Gọi hàm updatePrice ngay khi trang được tải lần đầu tiên
+                        updatePrice();
+                    });
+
+
+                </script>
+
+            }
             <div class="form-group">
                 <label asp-for="SoLuongDH" class="control-label">SỐ LƯỢNG ĐẶT HÀNG</label>
                 <input asp-for="SoLuongDH" class="form-control" />
                 <span asp-validation-for="SoLuongDH" class="text-danger"></span>
             </div>
             <br />
-            THÀNH TIỀN:
-            <br />  
+            <div>THÀNH TIỀN: <span id="ThanhTien" style="color:crimson"></span></div>
+           
+            <br /> 
             <br />  
             <div class="form-group">
                 <input type="submit" value="Tạo đơn hàng" class="btn btn-primary" />  |  <a asp-action="Index">Back to List</a>
@@ -50,35 +108,3 @@
     </div>
 </div>
 
-
-
-@section Scripts {
-@*     <script>
-        $(document).ready(function () {
-            $("#MaSP").change(function () {
-                var maSP = $(this).val();
-                $.ajax({
-                    url: "/Order/GetGiaCa",
-                    data: { maSP: maSP },
-                    success: function (data) {
-                        $("#GiaCa").val(data);
-                    }
-                });
-            });
-        });
-    </script> *@
-    <script>
-        $("select")
-            .on("change", function () {
-                var str = "";
-                $("select option:selected").each(function () {
-                    str += $(this).text() + " ";
-                    //xử lí code
-                    $GetGiaCa(sp);
-
-                });
-                $("#GiaCa").text(str);
-            })
-            .trigger("change");
-    </script>
-}

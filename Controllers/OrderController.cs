@@ -87,17 +87,72 @@ namespace ProductManagement.Controllers
             return RedirectToAction(nameof(Index));
 
         }
-        [HttpGet]
-        public async Task<IActionResult> GetGiaCa(int maSP)
+      
+        // GET: Order/Edit/5
+        public async Task<IActionResult> Edit(int? id)
         {
-            var product = await _context.Products.FindAsync(maSP);
-            if (product != null)
+            if (id == null)
             {
-                return Json(product);
+                return NotFound();
             }
 
-            return NotFound();
+            var order = await _context.Orders.FindAsync(id);
+            if (order == null)
+            {
+                return NotFound();
+            }
+            return View(order);
         }
+
+        // POST: Order/Edit/5
+        // To protect from overposting attacks, enable the specific properties you want to bind to.
+        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(int id, [Bind("MaDH,MaSP,TenKhachHang,SoLuongDH,ThanhTien")] Order order)
+        {
+            if (id != order.MaDH)
+            {
+                return NotFound();
+            }
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    _context.Update(order);
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!OrderExists(order.MaDH))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+                return RedirectToAction(nameof(Index));
+            }
+            return View(order);
+        }
+
+        [HttpGet("GetProductPrice")] // Giả sử một hành động bộ điều khiển để lấy giá
+        public IActionResult GetProductPrice(int maSP)
+        {
+            var product = _context.Products.FirstOrDefault(p => p.MaSP == maSP);
+            if (product != null)
+            {
+                return Ok(new { GiaCa = product.GiaCa }); // Trả về giá dưới dạng đối tượng JSON
+            }
+            else
+            {
+                return NotFound(); // Xử lý trường hợp không tìm thấy sản phẩm
+            }
+        }
+
 
         private bool OrderExists(int id)
         {
