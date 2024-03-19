@@ -31,6 +31,27 @@ namespace ProductManagement.Controllers
             return View();
         }
 
+        [HttpPost("CreateConfirmed")]
+        public async Task<IActionResult> CreateConfirmed(Order order)
+        {
+            if (ModelState.IsValid)
+            {
+                // Thêm đơn hàng mới vào cơ sở dữ liệu
+                _context.Orders.Add(order);
+                await _context.SaveChangesAsync();
+
+                // Chuyển hướng người dùng đến trang Index để xem danh sách đơn hàng
+                return RedirectToAction(nameof(Index));
+            }
+            else
+            {
+                // Nếu dữ liệu không hợp lệ, hiển thị lại trang Create để người dùng nhập lại
+                ViewData["Products"] = _context.Products.ToList();
+                return View("Create", order);
+            }
+        }
+
+
         public IActionResult ProductIndex()
         {
             //get all the initial data from the repository

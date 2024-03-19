@@ -37,14 +37,18 @@
 
                 <script>
                     var arr;
+                    var isProductSelected = false;
                     $(document).ready(function () {
                         var idsp = 0;
                         var SoLuongDHElement = $("#SoLuongDH");
+
                         $('#sp').on('change', function () {
                             console.log('value san pham',this.value);
                             idsp = Number(this.value)
                             console.log(' id change', idsp);
+                            updatePrice();
                         });
+
                         // Định nghĩa một hàm để gửi yêu cầu API và cập nhật giá cả khi có phản hồi
                         function updatePrice() {
                             $.ajax({
@@ -54,16 +58,13 @@
                                 success: function (res) {
 
                                     arr = res;
-                                    
-
-                         
                                     var obj = res.find(a=> a.maSP == idsp)
 
                                     if (obj) {
                                         $("#GiaCa").text(obj.giaCa);
                                         if (obj.giaCa && SoLuongDHElement.val()) {
                                             var totalPrice = obj.giaCa * parseInt(SoLuongDHElement.val());
-                                            $("#ThanhTien").text(totalPrice);
+                                            $("#ThanhTien").val(totalPrice);
                                             console.log(' san pham lay ra', obj);
                                             var x = parseInt(SoLuongDHElement.val());
                                             console.log(' so luong', x);
@@ -96,13 +97,18 @@
                 <span asp-validation-for="SoLuongDH" class="text-danger"></span>
             </div>
             <br />
-            <div>THÀNH TIỀN: <span id="ThanhTien" style="color:crimson"></span></div>
-           
+
+            @* <div>THÀNH TIỀN: <span id="ThanhTien" style="color:crimson"></span></div> *@
+            <div class="form-group">   
+                <label asp-for="ThanhTien" class="control-label">THÀNH TIỀN:</label>
+                <input asp-for="ThanhTien" class="form-control" readonly id="ThanhTien" />
+            </div>
+
             <br /> 
             <br />  
             <div class="form-group">
                 <input type="submit" value="Tạo đơn hàng" class="btn btn-primary" />  |  <a asp-action="Index">Back to List</a>
-        
+        </div>
             
         </form>
     </div>

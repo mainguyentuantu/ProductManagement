@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.Extensions.Hosting;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ProductManagement.Models
@@ -11,8 +12,8 @@ namespace ProductManagement.Models
         public string? TenKhachHang { get; set; }
 
         [ForeignKey("MaSP")]
-        public Products Product { get; set; }
-        
+        public Products? Product { get; set; }
+
         public int MaSP { get; set; }
 
         [Required(ErrorMessage = "Số lượng đặt hàng là trường bắt buộc.")]
@@ -22,6 +23,7 @@ namespace ProductManagement.Models
         [Required(ErrorMessage = "Thành tiền là trường bắt buộc.")]
         [Range(0, double.MaxValue, ErrorMessage = "Thành tiền không được nhập số âm.")]
         public double ThanhTien { get; set; }
+
 
     }
 }
