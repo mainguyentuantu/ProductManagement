@@ -27,8 +27,15 @@
 
             <div class="form-group">
                 <label asp-for="MaSP" class="control-label">TÊN SẢN PHẨM</label>
-                <select id="sp" asp-for="MaSP" asp-items="@(new SelectList(ViewData["Products"] as List<ProductManagement.Models.Products>, "MaSP", "TenSP"))" class="form-control">
-                </select>                   
+                @* <select id="sp" asp-for="MaSP" asp-items="@(new SelectList(ViewData["Products"] as List<ProductManagement.Models.Products>, "MaSP", "TenSP"))" class="form-control">
+                </select>  *@  
+                <select id="sp" asp-for="MaSP" class="form-control">
+                    <option selected disabled hidden>Chọn sản phẩm</option>
+                    @foreach (var product in (List<ProductManagement.Models.Products>)ViewData["Products"])
+                    {
+                        <option value="@product.MaSP">@product.TenSP</option>
+                    }
+                </select>
             </div>
             <br />
             <div>Giá: <span id="GiaCa" style="color:blue"></span></div>
