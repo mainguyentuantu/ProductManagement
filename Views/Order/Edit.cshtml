@@ -1,45 +1,117 @@
 ﻿@model ProductManagement.Models.Order
-
+@using System.Linq
 @{
     ViewData["Title"] = "Chỉnh sửa đơn hàng";
 }
 
-<h1>@ViewData["Title"]</h1>
+<script src="https://code.jquery.com/jquery-3.7.0.js"></script>
+<script src="https://code.jquery.com/jquery-migrate-3.4.1.js"></script>
 
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit" method="post">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="MaDH" />
+<h2>@ViewData["Title"]</h2>
 
-            <div class="form-group">
-                <label asp-for="TenKhachHang" class="control-label">Tên khách hàng</label>
-                <input asp-for="TenKhachHang" class="form-control" />
-                <span asp-validation-for="TenKhachHang" class="text-danger"></span>
-            </div>
+<form asp-action="Edit" method="post">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <input type="hidden" asp-for="MaDH" />
 
-            <div class="form-group">
-                <label asp-for="Product.TenSP" class="control-label">Tên sản phẩm</label>
-                <input asp-for="Product.TenSP" class="form-control" />
-                <span asp-validation-for="Product.TenSP" class="text-danger"></span>
-            </div>
-            
-            <div class="form-group">
-                <label asp-for="SoLuongDH" class="control-label">Số lượng đặt hàng</label>
-                <input asp-for="SoLuongDH" class="form-control" />
-                <span asp-validation-for="SoLuongDH" class="text-danger"></span>
-            </div>
-
-            <div class="form-group">
-                <input type="submit" value="Lưu" class="btn btn-primary" />
-                <a asp-action="Index" class="btn btn-secondary">Quay lại</a>
-            </div>
-        </form>
+    <div class="form-group">
+        <label asp-for="TenKhachHang" class="control-label">Tên khách hàng</label>
+        <input asp-for="TenKhachHang" class="form-control" required />
+        <span asp-validation-for="TenKhachHang" class="text-danger"></span>
     </div>
-</div>
 
-@section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    <div class="form-group">
+        <label asp-for="MaSP" class="control-label">TÊN SẢN PHẨM</label>
+        <select id="sp" asp-for="MaSP" class="form-control">
+            @foreach (var product in ((IEnumerable<SelectListItem>)ViewData["Products"]).AsEnumerable())
+            {
+                <option value="@product.Value">@product.Text</option>
+            }
+        </select>
+        <span asp-validation-for="MaSP" class="text-danger"></span>
+    </div>
+
+     @* <div>Giá: <span id="GiaCa" style="color:blue"></span></div> *@ 
+    <div class="form-group">
+        <label asp-for="Product.GiaCa" class="control-label">Giá cả: </label>
+        <input asp-for="Product.GiaCa" id="GiaCa" class="form-control" type="number" readonly style="color:blue" />
+        <span asp-validation-for="Product.GiaCa" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="SoLuongDH" class="control-label">Số lượng đặt hàng</label>
+        <input asp-for="SoLuongDH" class="form-control" type="number" min="0" required />
+        <span asp-validation-for="SoLuongDH" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="ThanhTien" class="control-label">Thành tiền</label>
+        <input asp-for="ThanhTien" class="form-control" readonly id="ThanhTien" style="color:tomato" />
+    </div>
+
+    <div class="form-group">
+        <input type="submit" value="Lưu" class="btn btn-primary" />
+        <a asp-action="Index" class="btn btn-secondary">Quay lại</a>
+    </div>
+    @section Scripts {
+
+        <script>
+            var arr;
+            var isProductSelected = false;
+            $(document).ready(function () {
+                var idsp = 0;
+                var SoLuongDHElement = $("#SoLuongDH");
+
+                // Gọi hàm updatePrice ngay khi trang được tải lần đầu tiên
+                updatePrice();
+
+                $('#sp').on('change', function () {
+                    console.log('value san pham', this.value);
+                    idsp = Number(this.value)
+                    console.log(' id change', idsp);
+                    updatePrice();
+                });
+
+                // Định nghĩa một hàm để gửi yêu cầu API và cập nhật giá cả khi có phản hồi
+                function updatePrice() {
+                    var idsp = $("#sp").val();
+                    var soLuong = SoLuongDHElement.val();
+                    if (idsp && soLuong) {
+                        $.ajax({
+                            url: "https://localhost:7215/api/Demo",
+                            type: 'GET',
+                            dataType: 'json',
+                            success: function (res) {
+
+                                arr = res;
+                                var obj = res.find(a => a.maSP == idsp)
+
+                                if (obj) {
+                                    $("#GiaCa").val(obj.giaCa);
+                                    console.log("giaca: ", obj.giaCa);
+                                    if (obj.giaCa && SoLuongDHElement.val()) {
+                                        var totalPrice = obj.giaCa * parseInt(SoLuongDHElement.val());
+                                        $("#ThanhTien").val(totalPrice);
+                                        console.log(' san pham lay ra', obj);
+                                        var x = parseInt(SoLuongDHElement.val());
+                                        console.log(' so luong', x);
+                                        console.log(' so gia ca', obj.giaCa);
+                                    }
+                                }
+
+                            }
+                        });
+                    }
+                }
+                // Gọi hàm updatePrice khi sự kiện "change" xảy ra trên select element
+                $("#sp").on("change", function () {
+                    updatePrice();
+                });
+                SoLuongDHElement.on("input", function () {
+                    updatePrice();
+                });
+
+            });
+
+        </script>
+
     }
-}
+</form>

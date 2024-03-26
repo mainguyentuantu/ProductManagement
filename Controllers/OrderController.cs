@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using NuGet.Protocol;
 using ProductManagement.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace ProductManagement.Controllers
 {
@@ -36,6 +37,9 @@ namespace ProductManagement.Controllers
         {
             if (ModelState.IsValid)
             {
+                // Tự động thiết lập thời gian tạo đơn hàng mới
+                order.ThoiGianTao = DateTime.Now;
+
                 // Thêm đơn hàng mới vào cơ sở dữ liệu
                 _context.Orders.Add(order);
                 await _context.SaveChangesAsync();
@@ -108,8 +112,8 @@ namespace ProductManagement.Controllers
             return RedirectToAction(nameof(Index));
 
         }
-      
-        // GET: Order/Edit/5
+
+
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -122,15 +126,18 @@ namespace ProductManagement.Controllers
             {
                 return NotFound();
             }
+
+            // Load thông tin về sản phẩm
+            var products = await _context.Products.ToListAsync();
+
+            ViewData["Products"] = new SelectList(products, "MaSP", "TenSP", order.MaSP);
+
             return View(order);
         }
 
-        // POST: Order/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("MaDH,MaSP,TenKhachHang,SoLuongDH,ThanhTien")] Order order)
+        public async Task<IActionResult> Edit(int id, [Bind("MaDH,TenKhachHang,MaSP,SoLuongDH,ThanhTien,ThoiGianTao")] Order order)
         {
             if (id != order.MaDH)
             {
@@ -139,8 +146,23 @@ namespace ProductManagement.Controllers
 
             if (ModelState.IsValid)
             {
+/*                // Truy xuất thông tin sản phẩm từ cơ sở dữ liệu bằng MaSP
+                var product = await _context.Products.FindAsync(order.MaSP);
+
+                // Kiểm tra điều kiện SoLuongDH < SoLuongTong
+                if (order.SoLuongDH >= product.SoLuongTong)
+                {
+                    ModelState.AddModelError("SoLuongDH", "Số lượng đặt hàng phải nhỏ hơn số lượng tổng.");
+                    ViewData["Products"] = _context.Products.ToList();
+                    return View(order);
+                }*/
+
                 try
                 {
+                    // Cập nhật thời gian chỉnh sửa
+                    order.ThoiGianTao = DateTime.Now;
+
+                    // Cập nhật thông tin đơn hàng trong cơ sở dữ liệu
                     _context.Update(order);
                     await _context.SaveChangesAsync();
                 }
@@ -155,25 +177,13 @@ namespace ProductManagement.Controllers
                         throw;
                     }
                 }
+                // Chuyển hướng người dùng đến trang Index để xem danh sách đơn hàng sau khi chỉnh sửa
                 return RedirectToAction(nameof(Index));
             }
+            // Nếu dữ liệu không hợp lệ, hiển thị lại view Edit để người dùng nhập lại
+            ViewData["Products"] = _context.Products.ToList();
             return View(order);
         }
-
-        [HttpGet("GetProductPrice")] // Giả sử một hành động bộ điều khiển để lấy giá
-        public IActionResult GetProductPrice(int maSP)
-        {
-            var product = _context.Products.FirstOrDefault(p => p.MaSP == maSP);
-            if (product != null)
-            {
-                return Ok(new { GiaCa = product.GiaCa }); // Trả về giá dưới dạng đối tượng JSON
-            }
-            else
-            {
-                return NotFound(); // Xử lý trường hợp không tìm thấy sản phẩm
-            }
-        }
-
 
         private bool OrderExists(int id)
         {

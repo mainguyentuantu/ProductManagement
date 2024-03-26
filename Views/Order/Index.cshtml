@@ -10,6 +10,7 @@
     <thead>
         <tr>
             <th>Mã đơn hàng</th>
+            <th>Thời gian tạo</th>
             <th>Tên khách hàng</th>
             <th>Sản phẩm</th>        
             <th>Giá sản phẩm</th>
@@ -22,15 +23,15 @@
         {
             <tr>
                 <td>@item.MaDH</td>
+                <td>@item.ThoiGianTao.ToString("dd/MM/yyyy | HH:mm")</td>
                 <td>@item.TenKhachHang</td>
                 <td>@item.Product.TenSP</td>
                 <td>@item.Product.GiaCa.ToString("n0")</td>
-                @* <td><input asp-for="@item.SoLuongDH" id="@item.MaDH" /></td> *@
+@*                 <td><input asp-for="@item.SoLuongDH" id="@item.MaDH" /></td> *@
                 <td>@item.SoLuongDH</td>
                 <td>@item.ThanhTien.ToString("n0")</td>
                 <td>
-                @* <a asp-action="Edit" asp-route-id="@item.MaDH">Edit</a> | *@
-                <a asp-action="Delete" asp-route-id="@item.MaDH">Delete</a>
+                <a asp-action="Edit" asp-route-id="@item.MaDH">Edit</a> | <a asp-action="Delete" asp-route-id="@item.MaDH">Delete</a>
                 </td>
                 
                 
