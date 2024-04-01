@@ -44,6 +44,11 @@ namespace ProductManagement.Controllers
                 _context.Orders.Add(order);
                 await _context.SaveChangesAsync();
 
+                // Cập nhật số lượng tồn của sản phẩm sau khi tạo đơn hàng
+                var product = await _context.Products.FindAsync(order.MaSP);
+                product.SoLuongTong -= order.SoLuongDH; // Trừ số lượng đặt hàng khỏi số lượng tổng
+                _context.SaveChanges(); // Lưu thay đổi vào cơ sở dữ liệu
+
                 // Chuyển hướng người dùng đến trang Index để xem danh sách đơn hàng
                 return RedirectToAction(nameof(Index));
             }
@@ -146,25 +151,26 @@ namespace ProductManagement.Controllers
 
             if (ModelState.IsValid)
             {
-/*                // Truy xuất thông tin sản phẩm từ cơ sở dữ liệu bằng MaSP
+                // Truy xuất thông tin sản phẩm từ cơ sở dữ liệu bằng MaSP
                 var product = await _context.Products.FindAsync(order.MaSP);
-
-                // Kiểm tra điều kiện SoLuongDH < SoLuongTong
-                if (order.SoLuongDH >= product.SoLuongTong)
-                {
-                    ModelState.AddModelError("SoLuongDH", "Số lượng đặt hàng phải nhỏ hơn số lượng tổng.");
-                    ViewData["Products"] = _context.Products.ToList();
-                    return View(order);
-                }*/
 
                 try
                 {
                     // Cập nhật thời gian chỉnh sửa
                     order.ThoiGianTao = DateTime.Now;
 
+                    // Lấy số lượng tổng mới
+                    var newTotalQuantity = product.SoLuongTong - (order.SoLuongDH - (await _context.Orders.AsNoTracking().FirstOrDefaultAsync(o => o.MaDH == id)).SoLuongDH);
+
+                    // Cập nhật số lượng tổng sản phẩm trong cơ sở dữ liệu
+                    product.SoLuongTong = newTotalQuantity;
+
                     // Cập nhật thông tin đơn hàng trong cơ sở dữ liệu
                     _context.Update(order);
                     await _context.SaveChangesAsync();
+
+           
+
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -183,6 +189,26 @@ namespace ProductManagement.Controllers
             // Nếu dữ liệu không hợp lệ, hiển thị lại view Edit để người dùng nhập lại
             ViewData["Products"] = _context.Products.ToList();
             return View(order);
+        }
+
+        [HttpPost]
+        // POST: Order/UpdateStock
+        public IActionResult UpdateStock(int productId, int newStock)
+        {
+            // Tìm sản phẩm theo productId trong cơ sở dữ liệu
+            var product = _context.Products.Find(productId);
+
+            if (product != null)
+            {
+                // Cập nhật số lượng tồn mới
+                product.SoLuongTong = newStock;
+                _context.SaveChanges(); // Lưu thay đổi vào cơ sở dữ liệu
+                return Ok(); // Trả về kết quả thành công
+            }
+            else
+            {
+                return NotFound(); // Trả về mã lỗi 404 nếu không tìm thấy sản phẩm
+            }
         }
 
         private bool OrderExists(int id)

@@ -50,7 +50,7 @@ namespace ProductManagement.Migrations
 
                     b.HasIndex("MaSP");
 
-                    b.ToTable("Orders");
+                    b.ToTable("Orders", (string)null);
                 });
 
             modelBuilder.Entity("ProductManagement.Models.Products", b =>
@@ -94,7 +94,7 @@ namespace ProductManagement.Migrations
 
                     b.HasKey("MaSP");
 
-                    b.ToTable("Products");
+                    b.ToTable("Products", (string)null);
                 });
 
             modelBuilder.Entity("ProductManagement.Models.Order", b =>

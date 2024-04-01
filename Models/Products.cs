@@ -45,6 +45,7 @@
         [Range(1, double.MaxValue, ErrorMessage = "Số lượng tổng phải là số nguyên dương.")]
             public double SoLuongTong { get; set; }
 
+
         // Danh sách các đơn đặt hàng của sản phẩm
         public ICollection<Order>? Orders { get; set; }
     }

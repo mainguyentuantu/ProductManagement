@@ -1,7 +1,6 @@
 ﻿@using System.Linq
 @model ProductManagement.Models.Order
 
-
 @{
     ViewData["Title"] = "Thêm sản phẩm vào đơn hàng";
 }
@@ -39,16 +38,17 @@
                 <span asp-validation-for="MaSP" class="text-danger"></span>
             </div>
             <br />
-            <div>Giá: <span id="GiaCa" style="color:blue"></span></div>
-
+            <div>GIÁ: <span id="GiaCa" style="color:blue"></span></div>
+            <div>SỐ LƯỢNG: <span id="SoLuongTong" style="color:blue"></span></div>
             <br />
            
             <div class="form-group">
                 <label asp-for="SoLuongDH" class="control-label">SỐ LƯỢNG ĐẶT HÀNG</label>
                 <input asp-for="SoLuongDH" class="form-control" min="0" required />
-                <span asp-validation-for="SoLuongDH" class="text-danger"></span>
-                <span class="text-danger" id="quantity-error" style="display:none;">Số lượng đặt hàng vượt quá số lượng có sẵn.</span>
+                <span asp-validation-for="SoLuongDH" class="text-danger" id="quantity-error" style="display:none;">Số lượng đặt hàng vượt quá số lượng có sẵn.</span>
+
             </div>
+
             <br />
 
             <div class="form-group">   
@@ -68,6 +68,7 @@
             <script>
                 var arr;
                 var isProductSelected = false;
+
                 $(document).ready(function () {
                     var idsp = 0;
                     var SoLuongDHElement = $("#SoLuongDH");
@@ -77,6 +78,20 @@
                         idsp = Number(this.value)
                         console.log(' id change', idsp);
                         updatePrice();
+                    });
+
+                    $("form").submit(function (event) {
+                        var SoLuongDH = parseInt($("#SoLuongDH").val());
+                        var SoLuongTong = parseInt($("#SoLuongTong").text());
+
+                        // Kiểm tra nếu số lượng đặt hàng lớn hơn số lượng tổng
+                        if (SoLuongDH > SoLuongTong) {
+                            // Ngăn chặn việc submit biểu mẫu mặc định
+                            event.preventDefault();
+
+                            // Hiển thị thông báo lỗi
+                            $("#quantity-error").show();
+                        }
                     });
 
                     // Định nghĩa một hàm để gửi yêu cầu API và cập nhật giá cả khi có phản hồi
@@ -92,23 +107,27 @@
 
                                 if (obj) {
                                     $("#GiaCa").text(obj.giaCa);
+                                    $("#SoLuongTong").text(obj.soLuongTong);
 
-                                    console.log("tong so luong", obj.SoLuongTong);
-                                    console.log("tong so luong", SoLuongDHElement.val());
-
-                                    if (SoLuongDHElement.val() > obj.SoLuongTong) {
-                                        $('#quantity-error').show();
-                                    } else {
-                                        $('#quantity-error').hide();
-                                    }
+                             
+                                    
                                     console.log("giaca: ", obj.giaCa);
                                     if (obj.giaCa && SoLuongDHElement.val()) {
-                                        var totalPrice = obj.giaCa * parseInt(SoLuongDHElement.val());
+
+                                       var totalPrice = obj.giaCa * parseInt(SoLuongDHElement.val());
                                         $("#ThanhTien").val(totalPrice);
-                                        console.log(' san pham lay ra', obj);
-                                        var x = parseInt(SoLuongDHElement.val());
-                                        console.log(' so luong', x);
-                                        console.log(' so gia ca', obj.giaCa);
+
+                                        console.log(" san pham lay ra", obj);
+                                        console.log("tong so luong", obj.soLuongTong);
+                                        console.log(" so luong DH", parseInt(SoLuongDHElement.val()));
+
+                                     
+                                            if (parseInt(SoLuongDHElement.val()) > obj.soLuongTong) {
+                                                $("#quantity-error").show();
+                                            } else {
+                                                $("#quantity-error").hide();
+                                            }
+                                                                       
                                     }
                                 }
 
@@ -123,8 +142,10 @@
                     SoLuongDHElement.on("input", function () {                
                         updatePrice();
                     });
+
                     // Gọi hàm updatePrice ngay khi trang được tải lần đầu tiên
                     updatePrice();
+
                 });
 
 

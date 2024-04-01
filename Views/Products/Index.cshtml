@@ -47,6 +47,7 @@
             <th>
                 <a asp-action="Index" asp-route-sortOrder="@ViewData["SoLuongTongSortParm"]">TỔNG SỐ LƯỢNG</a>
             </th>
+            @* <th>SỐ LƯỢNG TỒN</th> *@
             <th></th>
         </tr>
     </thead>
@@ -77,6 +78,9 @@
             <td>
                  @Html.DisplayFor(modelItem => item.SoLuongTong)
             </td>
+@*                 <td>
+                    @Html.DisplayFor(modelItem => item.SoLuongTon)
+                </td> *@
             <td>
                 <a asp-action="Edit" asp-route-id="@item.MaSP">Edit</a> |
                 <a asp-action="Details" asp-route-id="@item.MaSP">Details</a> |

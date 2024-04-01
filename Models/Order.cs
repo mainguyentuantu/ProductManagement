@@ -28,7 +28,7 @@ namespace ProductManagement.Models
         [Required(ErrorMessage = "Thời gian tạo đơn hàng là trường bắt buộc.")]
         public DateTime ThoiGianTao { get; set; }
 
-
+  
 
     }
 }
