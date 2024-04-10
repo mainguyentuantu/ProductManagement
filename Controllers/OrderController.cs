@@ -215,7 +215,15 @@ namespace ProductManagement.Controllers
         {
             return _context.Orders.Any(e => e.MaDH == id);
         }
-    } 
+		[HttpGet("test")]
+		public async Task<List<Products>> GetListProduct(int maSP)
+		{
+			List<Products> pro = new List<Products>();
+			var products = _context.Products.ToList();
+			return products;
+
+		}
+	} 
     
 }
 

@@ -10,8 +10,9 @@ namespace ProductManagement.Models
         }
         public DbSet<Products> Products { get; set; }
         public DbSet<Order> Orders { get; set; }
+		public DbSet<Accounts> Accounts { get; set; }
 
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
+		protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Order>()
                 .HasOne(o => o.Product)
